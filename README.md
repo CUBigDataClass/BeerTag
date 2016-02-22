@@ -1,1 +1,1 @@
-# BeerTag
+# Tag
