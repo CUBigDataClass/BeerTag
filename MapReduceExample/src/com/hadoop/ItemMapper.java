@@ -54,6 +54,7 @@ public class ItemMapper extends Mapper<Object, Text, Text, IntWritable> {
 			for (String keyword : keywords) {
 
 				for (String token : tokens) {
+					token = token.toLowerCase();
 					if (token.equals(keyword) || token.contains(keyword)) {
 						output.write(new Text(keyword), one);
 						break;

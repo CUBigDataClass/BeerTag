@@ -36,7 +36,7 @@ class MyListener(StreamListener):
         return True
  
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['tequila','vodka'])    
+twitter_stream.filter(track=['tequila','vodka','mojito','margarita'])    
 
 
 #getTimeLine()
