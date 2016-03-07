@@ -26,4 +26,9 @@ enabled=1
 
 
  
-* Install git; Run the comamnd `yum install git`
+* Install git
+```
+Run the comamnd 
+
+yum install git
+```
