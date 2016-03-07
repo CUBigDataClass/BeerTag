@@ -18,8 +18,12 @@ enabled=1
 
 `sudo yum install -y mongodb-org`
 
-* Run MongoDB
+3: Run MongoDB
 
 1: Start mongodb using this command `sudo service mongod start`  
 2: Start MongoDB on reboot `sudo chkconfig mongod on`  
 3: Stop mongodb using this command `sudo service mongod stop`
+
+
+ 
+* Install git; Run the comamnd `yum install git`
