@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -33,7 +34,7 @@ public class ItemMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 		JSONObject tweetObject = null;
 
-		ArrayList<String> keywords = this.getKeyWords();
+		String[] keywords = this.getKeyWords(output);
 
 		try {
 			tweetObject = (JSONObject) parser.parse(value.toString());
@@ -43,6 +44,9 @@ public class ItemMapper extends Mapper<Object, Text, Text, IntWritable> {
 		if (tweetObject != null) {
 			String tweetText = (String) tweetObject.get("text");
 
+			if(tweetText == null){
+				return;
+			}
 			StringTokenizer st = new StringTokenizer(tweetText);
 
 			ArrayList<String> tokens = new ArrayList<String>();
@@ -67,16 +71,13 @@ public class ItemMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 	}
 
-	ArrayList<String> getKeyWords() {
+	String[] getKeyWords(Mapper<Object, Text, Text, IntWritable>.Context context) {
 
-		ArrayList<String> keywords = new ArrayList<String>();
 
-		keywords.add("vodka");
-		keywords.add("tequila");
-		keywords.add("mojito");
-		keywords.add("margarita");
-		
-		return keywords;
+		Configuration conf =  (Configuration) context.getConfiguration();
+		String param = conf.get("keywords");
+
+		return param.split(",");
 
 	}
 }

@@ -9,12 +9,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class ItemImpl {
-//Hadoop jar command 
-//$HADOOP_HOME/bin/hadoop jar ~/workspace/MapReduceExample/itemcount.jar   /user/rohit/input/test1 /user/rohit/output/
 
 	public static void main(String[] args) throws Exception {
 
 	    Configuration conf = new Configuration();
+	    conf.set("keywords", args[2]);
+	    
 	    Job job = Job.getInstance(conf, "item count");
 	    job.setJarByClass(ItemImpl.class);
 		job.setMapperClass(ItemMapper.class);
