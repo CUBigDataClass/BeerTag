@@ -2,7 +2,7 @@
 
 The following commands were used to install java on aws machine
 ```
-scp  -i beertag.pem jdk-7u79-linux-i586.tar.gz   ubuntu@52.37.90.119:
+scp  -i beertag.pem jdk-7u79-linux-i586.tar.gz   ubuntu@xxx.xxx.xxx.xxx:
 sudo apt-get update
 sudo mkdir /usr/local/java
 sudp cp jdk-8u73-linux-x64.tar.gz /usr/local/java/
