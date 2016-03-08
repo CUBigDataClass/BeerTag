@@ -6,6 +6,9 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 
 from datetime import datetime
+import os
+
+
  
 with open("twitter_secrets.json.nogit") as fh:
     secrets = simplejson.loads(fh.read())
@@ -20,11 +23,13 @@ auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 
 i = datetime.now()
-
-
 date =  i.strftime('%Y%m%d')
-
 json_file = 'tweets'+str(date)
+
+if not os.path.exists('tweets'):
+    os.makedirs('tweets')
+
+
 class MyListener(StreamListener):
  
     def on_data(self, data):
