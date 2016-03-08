@@ -29,7 +29,7 @@ class MyListener(StreamListener):
  
     def on_data(self, data):
         try:
-            with open(json_file, 'a') as f:
+            with open('./tweets/'+json_file, 'a') as f:
                 f.write(data)
                 #print json.loads(data)['entities']['hashtags']
                 print json.loads(data)['text']
