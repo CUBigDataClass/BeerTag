@@ -5,6 +5,8 @@ import simplejson
 from tweepy import Stream
 from tweepy.streaming import StreamListener
 
+from datetime import datetime
+ 
 with open("twitter_secrets.json.nogit") as fh:
     secrets = simplejson.loads(fh.read())
 
@@ -17,12 +19,17 @@ access_secret = secrets["access_token_secret"]
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 
+i = datetime.now()
 
+
+date =  i.strftime('%Y%m%d')
+
+json_file = 'tweets'+str(date)
 class MyListener(StreamListener):
  
     def on_data(self, data):
         try:
-            with open('python.json', 'a') as f:
+            with open(json_file, 'a') as f:
                 f.write(data)
                 #print json.loads(data)['entities']['hashtags']
                 print json.loads(data)['text']
