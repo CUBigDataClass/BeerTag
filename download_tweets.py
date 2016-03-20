@@ -48,7 +48,7 @@ class MyListener(StreamListener):
         return True
  
 twitter_stream = Stream(auth, MyListener())
-twitter_stream.filter(track=['tequila','vodka','absinthe','Jägermeister', 'whiskey', 'whiskey', 'rum', 'beer', 'wine', 'champagne', 'gin', 'scotch', 'bourbon', 'brandy', 'cognac', 'sake', 'white wine', 'red wine'])    
+twitter_stream.filter(track=['tequila','vodka','absinthe','Jagermeister', 'whiskey', 'whiskey', 'rum', 'beer', 'wine', 'champagne', 'gin', 'scotch', 'bourbon', 'brandy', 'cognac', 'sake', 'white wine', 'red wine'])    
 
 
 #getTimeLine()
