@@ -1,1 +1,0 @@
-mongoimport --db `dbname` --collection `collection name`--file `team.json`
