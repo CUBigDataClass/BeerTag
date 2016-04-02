@@ -33,3 +33,10 @@ sh.enableSharding("tags")
 db.tweets.ensureIndex( { _id : "hashed" } )
 sh.shardCollection("tags.tweets", { "_id": "hashed" } )
 ```
+Deleting a shard
+
+```
+
+use admin
+db.runCommand( { removeShard: "mongodb0" } )
+```
