@@ -4,7 +4,7 @@ import pymongo
 import sys
 import json
 
-connection = pymongo.MongoClient("mongodb://ec2-52-35-62-67.us-west-2.compute.amazonaws.com:27011")
+connection = pymongo.MongoClient("")
 db=connection.tags
 tweets = db.tweets
 
