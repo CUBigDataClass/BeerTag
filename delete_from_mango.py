@@ -4,7 +4,7 @@ import pymongo
 import sys
 import json
 
-connection = pymongo.MongoClient("mongodb://ec2-52-38-4-39.us-west-2.compute.amazonaws.com:27011")
+connection = pymongo.MongoClient("mongodb://ec2-52-35-62-67.us-west-2.compute.amazonaws.com:27011")
 db=connection.tags
 tweets = db.tweets
 
@@ -15,18 +15,21 @@ def main(jsonfile):
 	for line in f.readlines():
 		try:
 			tweet_dict = json.loads(line)
-			tweet_id = tweet_dict['id']
-			remove(tweet_id)
+			if 'timestamp_ms' in tweet_dict:
+			    timestamp_ms = tweet_dict['timestamp_ms']
+			    remove('timestamp_ms',timestamp_ms)
+			else:
+			    timestamp = tweet_dict['limit']['timestamp_ms']	
+			    remove('limit.timestamp_ms',timestamp)		
 		except 	Exception as e:
 			print "Unexpected error:", type(e), e
 			sys.exit()
         
 
-def remove(id):
+def remove(key,id):
     '''Return all of the teams in western confence
     '''
-    print id
-    query = {'id':long(id)}
+    query = {key:id}
 
     print tweets.remove(query)
 
