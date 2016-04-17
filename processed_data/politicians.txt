@@ -1,0 +1,5 @@
+clinton	185214
+cruz	149390
+sanders	194275
+trump	295045
+kasich	22805
