@@ -4,15 +4,14 @@ bourbon	13234
 brandy	12386
 champagne	45940
 cognac	2744
-count	1034922
 gin	46238
 jagermeister	841
-red wine	7147
+Red_Wine	7147
 rum	46542
 sake	68864
 scotch	9060
 tequila	44682
 vodka	78857
 whiskey	31723
-white wine	2189
+white_wine	2189
 wine	210601
