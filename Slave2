@@ -1,0 +1,91 @@
+Local Machines
+
+sudo chmod 600 ~/.ssh/beertag.pem
+
+ssh -i ~/.ssh/beertag.pem ubuntu@ec2-52-36-94-153.us-west-2.compute.amazonaws.com
+
+Slave Node Commands
+
+sudo apt-get update
+
+sudo apt-get install openjdk-7-jdk 
+
+wget http://apache.mirrors.tds.net/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz -P ~/Downloads
+
+sudo tar zxvf ~/Downloads/hadoop-* -C /usr/local
+
+sudo mv /usr/local/hadoop-* /usr/local/hadoop
+
+sudo vim ~/.profile
+
+------ ADD Hadoop and Java variables---------
+
+export JAVA_HOME=/usr
+export PATH=$PATH:$JAVA_HOME/bin
+
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+
+
+source ~/.profile
+
+
+--------Configure Hadoop Configurations-------
+sudo vim $HADOOP_CONF_DIR/hadoop-env.sh
+
+export JAVA_HOME=/usr 
+
+
+
+sudo vim $HADOOP_CONF_DIR/core-site.xml
+
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://ec2-52-39-52-1.us-west-2.compute.amazonaws.com:9000</value>
+  </property>
+</configuration>
+
+
+sudo vim $HADOOP_CONF_DIR/yarn-site.xml
+
+
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>ec2-52-39-52-1.us-west-2.compute.amazonaws.com</value>
+  </property>
+</configuration>
+
+
+sudo cp $HADOOP_CONF_DIR/mapred-site.xml.template $HADOOP_CONF_DIR/mapred-site.xml 
+
+
+sudo vim $HADOOP_CONF_DIR/mapred-site.xml
+<configuration>
+  <property>
+    <name>mapreduce.jobtracker.address</name>
+    <value>ec2-52-39-52-1.us-west-2.compute.amazonaws.com:54311</value>
+  </property>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration> 
+
+sudo vim $$HADOOP_CONF_DIR/hdfs-site.xml
+sudo mkdir -p $HADOOP_HOME/hadoop_data/hdfs/datanode
+sudo chown -R ubuntu $HADOOP_HOME
