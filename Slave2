@@ -89,3 +89,27 @@ sudo vim $HADOOP_CONF_DIR/mapred-site.xml
 sudo vim $$HADOOP_CONF_DIR/hdfs-site.xml
 sudo mkdir -p $HADOOP_HOME/hadoop_data/hdfs/datanode
 sudo chown -R ubuntu $HADOOP_HOME
+
+------------------------------------SPARK CONFIGURATION---------------------
+sudo apt-get install scala
+
+wget http://apache.mirrors.tds.net/spark/spark-1.4.1/spark-1.4.1-bin-hadoop2.4.tgz -P ~/Downloads  
+sudo tar zxvf ~/Downloads/spark-* -C /usr/local  
+sudo mv /usr/local/spark-* /usr/local/spark
+
+sudo vim ~/.profile
+
+export SPARK_HOME=/usr/local/spark  
+export PATH=$PATH:$SPARK_HOME/bin  
+
+. ~/.profile
+
+sudo chown -R ubuntu $SPARK_HOME 
+
+cp $SPARK_HOME/conf/spark-env.sh.template $SPARK_HOME/conf/spark-env.sh  
+
+sudo vim $SPARK_HOME/conf/spark-env.sh
+
+export JAVA_HOME=/usr  
+export SPARK_PUBLIC_DNS="current_node_public_dns"  
+export SPARK_WORKER_CORES=6 
