@@ -1,0 +1,17 @@
+beer-35.13
+wine-21.96
+vodka-8.22
+sake-7.18
+rum-4.85
+gin-4.82
+champagne-4.79
+tequila-4.66
+whiskey-3.31
+bourbon-1.38
+brandy-1.29
+scotch-0.94
+Red_Wine-0.75
+cognac-0.29
+white_wine-0.23
+absinthe-0.12
+jagermeister-0.09
