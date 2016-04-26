@@ -57,8 +57,16 @@ discovery.zen.ping.unicast.enabled: false
 discovery.zen.ping.unicast.hosts: ["ES1","ES2","ES3"]
 --------------------------------------------------
 
+sudo vi /etc/default/elasticsearch
+ES_HEAP_SIZE= 4g				//50% of available memory 
+MAX_LOCKED_MEMORY=unlimited
+
+
 sudo service elasticsearch restart
 sudo update-rc.d elasticsearch defaults 95 10
+
+#get state of cluster
+curl -XGET 'http://localhost:9200/_cluster/state?pretty'
 
 
 
