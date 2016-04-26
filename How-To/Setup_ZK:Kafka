@@ -1,0 +1,116 @@
+--------------------------------------------------
+				AWS - Machine Set-up
+--------------------------------------------------
+- use Ubuntu instead of amazon linux #not sure why but I had lots of issues with amazon linux/java/permissions idk 
+- zookeeper is pretty light-weight but kafka eats ram so pick 3-machines in the medium/heavy 
+- this is a setup for a 3-cluster zookeeper and 3-cluster kafka running on the same 3 machines
+- create security group
+	- zookeeper needs ports: 22  
+							 2181
+							 2888 
+							 3888 
+							 7199 
+	- kafka needs ports: 22 
+						 2080
+						 2181
+						 2888
+						 3888
+						 6667
+						 9092
+
+---------------------------------------------------
+			Install Java
+--------------------------------------------------
+http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer
+java -version
+
+// if java version isn't 1.7 run
+//sudo update-java-alternatives -s java-7-oracle
+
+sudo apt-get install oracle-java7-set-default
+
+
+---------------------------------------------------
+				Zookeeper SET-UP
+---------------------------------------------------
+####http://armourbear.blogspot.com/2015/03/setting-up-multinode-kafka-cluster.html
+
+#Download
+wget http://www-eu.apache.org/dist/kafka/0.8.2.1/kafka_2.10-0.8.2.1.tgz
+tar -xzvf http://www-eu.apache.org/dist/kafka/0.8.2.1/kafka_2.10-0.8.2.1.tgz
+mv kafka_2.10-0.8.2.1 kafka
+
+
+
+cd ~/kafka/conf
+edit zookeeper.properties   //on each machine
+
+
+make sure following options are filled out:
+
+----------------------------------------------
+dataDir=/~path/zookeeper
+clientPort=2181
+server.1=ZK1:2888:3888
+server.2=ZK2:2888:3888
+server.3=ZK3:2888:3888
+initLimit=5
+syncLimit=2
+-----------------------------------------------
+
+
+	On ZK1
+    echo "1" > /~path/zookeeper/data/myid     //default is /tmp/zookeeper   feel free to change dataDir= and create files where need be
+
+    On ZK2
+    echo "2" > /~path/zookeeper/data/myid
+    
+    On ZK3
+    echo "3" > /~path/zookeeper/data/myid
+
+    To check 
+    cat /~path/zookeeper/data/myid       //on ZK1
+    1									//returns a 1 on ZK1; a 2 on ZK2 and a 3 and ZK3	
+
+
+
+----------------------------------------------------------------------------------
+						KAFKA SET-UP
+----------------------------------------------------------------------------------
+
+cd ~/kafka/conf
+edit server.properties   //on each machine
+
+
+edit following options:
+
+------------------------------------------------
+
+broker.id=KAFKA #         		    			//put a 1 for KAFKA1, a 2 for KAFKA2 and a 3 for KAFKA3
+#host.name=local host ip address   				//since we are using the same machines for ZK and KAFKA put ZK1 IP for KAFKA1 ....
+log.dirs=/tmp/kafka2-logs          				//put server number after kafka 
+zookeeper.connect=ZK1:2181,ZK2:2181,ZK3:2181
+
+--------------------------------------------------
+
+
+mkdir ~/kafka/logs
+
+//start zookeeper on all the machines from the ~/kafka directory
+nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
+
+//start kafka on all the machines from the ~/kafka directory
+nohup bin/kafka-server-start.sh config/server.properties &
+
+
+
+
+
+
+
+
+
