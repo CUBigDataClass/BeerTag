@@ -1,19 +1,19 @@
-liquor-absinthe,1158
-liquor-bourbon,13234
-liquor-brandy,12386
-liquor-cognac,2744
-liquor-gin,46238
-liquor-jagermeister,841
-liquor-rum,46542
-liquor-sake,68864
-liquor-scotch,9060
-liquor-tequila,44682
-liquor-vodka,78857
-liquor-whiskey,31723
+alcohol-liquor-absinthe,1158
+alcohol-liquor-bourbon,13234
+alcohol-liquor-brandy,12386
+alcohol-liquor-cognac,2744
+alcohol-liquor-gin,46238
+alcohol-liquor-jagermeister,841
+alcohol-liquor-rum,46542
+alcohol-liquor-sake,68864
+alcohol-liquor-scotch,9060
+alcohol-liquor-tequila,44682
+alcohol-liquor-vodka,78857
+alcohol-liquor-whiskey,31723
 
-beer,336931
+alcohol-beer,336931
 
-wine-white_wine,2189
-wine-wine,210601
-wine-champagne,45940
-wine-Red_Wine,7147
+alcohol-wine-white_wine,2189
+alcohol-wine-wine,210601
+alcohol-wine-champagne,45940
+alcohol-wine-Red_Wine,7147

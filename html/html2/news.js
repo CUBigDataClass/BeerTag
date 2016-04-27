@@ -3,7 +3,7 @@ var width = 750;
 var height = 600;
 var radius = Math.min(width, height) / 2;
 
-var csv2 = 'tweets.csv';
+var csv2 = 'news.csv';
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
@@ -74,9 +74,6 @@ function click(d) {
 	}
 	if(d == 'sports leagues'){
 		window.location = 'sports.html';
-	}
-	if(d == 'news'){
-		window.location = 'news.html';
 	}
 };
 

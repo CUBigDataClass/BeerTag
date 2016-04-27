@@ -3,7 +3,7 @@ var width = 750;
 var height = 600;
 var radius = Math.min(width, height) / 2;
 
-var csv2 = 'tweets.csv';
+var csv2 = 'sports.csv';
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
@@ -40,7 +40,7 @@ var colors = {
 	'sanders': '#290EE9',
 	'trump': '#E91D0E',
 	'kasich': '#E91D0E',
-	'sports leagues': '#7f8c8d',
+	'sport leagues': '#7f8c8d',
 	'news': '#7f8c8d'
 };
 
@@ -71,12 +71,6 @@ function click(d) {
 	}
 	if(d == 'election'){
 		window.location = 'election.html';
-	}
-	if(d == 'sports leagues'){
-		window.location = 'sports.html';
-	}
-	if(d == 'news'){
-		window.location = 'news.html';
 	}
 };
 
