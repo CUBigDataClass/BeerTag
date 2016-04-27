@@ -1,0 +1,154 @@
+---------------------------------------------------
+			Install Java
+--------------------------------------------------
+http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+java -version
+
+// if java version isn't 1.7 run
+//sudo update-java-alternatives -s java-7-oracle
+
+sudo apt-get install oracle-java8-set-default
+
+------------------------------------------------------------
+					Elastic-Search Setup
+------------------------------------------------------------
+#### thanks to https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elk-stack-on-ubuntu-14-04  ###
+
+//install
+
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
+sudo apt-get update
+sudo apt-get -y install elasticsearch
+
+//edit config  we will set up cluster with a master, client and data node
+sudo vi /etc/elasticsearch/elasticsearch.yml
+
+edit following lines:
+---------------------------------------------
+cluster.name:
+network.host: local machine IP
+bootstrap.mlockall: true      //should just have to enable this option
+
+
+//under node section
+	--for master
+node.name: ClusterName-master.1
+node.master: true
+node.data: false	
+
+	--for client
+node.name: ClusterName-client.2
+node.client: true
+node.data: false
+
+	--for data
+node.name: ClusterName-data.3
+node.client: false
+node.data: true
+
+
+//under Discovery
+discovery.zen.ping.unicast.enabled: false									
+discovery.zen.ping.unicast.hosts: ["ES1","ES2","ES3"]
+--------------------------------------------------
+
+sudo vi /etc/default/elasticsearch
+ES_HEAP_SIZE= 4g				//50% of available memory 
+MAX_LOCKED_MEMORY=unlimited
+
+
+sudo service elasticsearch restart
+sudo update-rc.d elasticsearch defaults 95 10
+
+#get state of cluster
+curl -XGET 'http://localhost:9200/_cluster/state?pretty'
+
+
+
+-----------------------------------------------------------------------------
+						Install Kibana
+-----------------------------------------------------------------------------
+echo "deb http://packages.elastic.co/kibana/4.4/debian stable main" | sudo tee -a /etc/apt/sources.list.d/kibana-4.4.x.list
+sudo apt-get update
+sudo apt-get -y install kibana
+sudo vi /opt/kibana/config/kibana.yml
+
+server.host: "localhost"    //or put in IP of  local host
+
+sudo update-rc.d kibana defaults 96 9
+sudo service kibana start
+
+// probably best to install either the plugin shield or setup Nginx at this point
+
+
+-----------------------------------------------------------------------------
+							Install Logstash
+-----------------------------------------------------------------------------
+echo 'deb http://packages.elastic.co/logstash/2.2/debian stable main' | sudo tee /etc/apt/sources.list.d/logstash-2.2.x.list
+sudo apt-get update
+sudo apt-get install logstash
+sudo mkdir -p /etc/pki/tls/certs
+sudo mkdir /etc/pki/tls/private
+sudo vi /etc/ssl/openssl.cnf
+
+//in the [v3_ca] section
+subjectAltName = IP: server_private_IP
+
+cd /etc/pki/tls
+sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+
+
+sudo vi /etc/logstash/conf.d/02-beats-input.conf
+paste into input.conf:
+
+input {
+  beats {
+    port => 5044
+    ssl => true
+    ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
+    ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
+  }
+}
+
+
+sudo vi /etc/logstash/conf.d/10-syslog-filter.conf
+paste into filter.cong:
+
+filter {
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+      add_field => [ "received_at", "%{@timestamp}" ]
+      add_field => [ "received_from", "%{host}" ]
+    }
+    syslog_pri { }
+    date {
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    }
+  }
+}
+
+
+sudo vi /etc/logstash/conf.d/30-elasticsearch-output.conf
+paste into output.conf:
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    sniffing => true
+    manage_template => false
+    index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+    document_type => "%{[@metadata][type]}"
+  }
+}
+
+
+
+sudo service logstash configtest    //should display Configuration OK
+sudo service logstash restart 
+sudo update-rc.d logstash defaults 96 9
+

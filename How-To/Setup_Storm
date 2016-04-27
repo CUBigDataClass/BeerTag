@@ -1,0 +1,170 @@
+----------------------------------------
+			Install Storm
+----------------------------------------
+Prereq: already have zookeeper cluster setup
+
+Get 3 - aws machines in the mediumm/large for the workers
+Get 1 small-medium machine for nimbus 
+
+security group:
+			ports needed: 22
+						  6700
+						  6701
+						  6702
+						  6703
+						  6627
+						  8080 
+
+- use ubuntu
+
+-----------------------------------------
+				install java
+-----------------------------------------
+http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java7-installer
+java -version
+
+sudo update-java-alternatives -s java-7-oracle #if you need to switch from another java version
+
+sudo apt-get install oracle-java7-set-default 
+
+------------------------------------------
+			setup storm
+------------------------------------------
+## thanks to http://sashimw.blogspot.com/2015/11/setting-up-apache-storm-topology-for.html
+
+wget http://www-eu.apache.org/dist/storm/apache-storm-0.9.5/apache-storm-0.9.5.tar.gz
+tar -xzvf apache-storm-0.9.5
+cd apache-storm-0.9.5
+
+mkdir /home/ubuntu/apache-storm-0.9.5/bin/localdir
+#edit the storm.yaml file in apache-storm/conf/storm.yaml
+
+#add this to the storm.yaml on the nimbus machine
+storm.zookeeper.servers:
+     - "zookeeper 1 IP"
+     - "zookeeper 2 IP"
+     - "zookeeper 3 IP"
+
+storm.zookeeper.port: 2181
+storm.local.dir: "/home/ubuntu/apache-storm-0.9.5/bin/localdir"      //create directory if need be
+nimbus.host: "Nimbus Host"
+nimbus.seeds : ["localhost"]
+nimbus.thrift.port: 6627
+nimbus.thrift.threads: 64
+nimbus.thrift.max_buffer_size: 1048576
+nimbus.childopts: "-Xmx1024m  -Djava.net.preferIPv4Stack=true"
+nimbus.task.timeout.secs: 30
+nimbus.supervisor.timeout.secs: 60
+nimbus.monitor.freq.secs: 10
+nimbus.cleanup.inbox.freq.secs: 600
+nimbus.inbox.jar.expiration.secs: 3600
+nimbus.code.sync.freq.secs: 300
+nimbus.task.launch.secs: 120
+nimbus.reassign: true
+nimbus.file.copy.expiration.secs: 600
+nimbus.topology.validator: "backtype.storm.nimbus.DefaultTopologyValidator"
+topology.min.replication.count: 1
+topology.max.replication.wait.time.sec: 60
+nimbus.credential.renewers.freq.secs: 600
+ui.childopts: "-Xmx1024m -Djava.net.preferIPv4Stack=true"
+
+
+
+#add to storm.yaml on the worker machines
+
+storm.zookeeper.servers:
+     - "zookeeper 1 IP"
+     - "zookeeper 2 IP"
+     - "zookeeper 3 IP"
+
+storm.zookeeper.port: 2181
+nimbus.host: "nimbus IP"
+storm.nimbus.port: 6627
+storm.local.dir: "/home/ubuntu/apache-storm-0.9.5/localdir"
+supervisor.slots.ports:
+        - 6700
+        - 6701
+        - 6702
+        - 6703
+
+-----------------------------------------
+			Supervisor Mode
+-----------------------------------------			
+### thanks to https://morgankenyon.wordpress.com/2015/08/22/running-apache-storm-under-supervision-supervisord/
+# do for each machine
+
+
+sudo apt-get install supervisor
+echo_supervisord_conf > ~/supervisord.conf 
+nano ~/supervisord.conf
+
+#add to supervisord.conf for the nimbus machine
+
+
+[program:storm_ui]
+command=/home/ubuntu/apache-storm-0.9.5/bin/storm ui
+
+[program:storm_nimbus]
+command=/home/ubuntu/apache-storm-0.9.5/bin/storm nimbus
+
+
+#add to supervisord.conf for the worker machines
+[program:storm_supervisor]
+command=/home/ubuntu/apache-storm-0.9.5/bin/storm supervisor
+
+
+#run 
+
+supervisord -c ~/supervisord.conf
+supervisorctl -c ~/supervisord.conf
+
+check the Storm UI to see if everything is running
+
+
+#usage
+supervisorctl -c ~/supervisord.conf
+
+keywords:
+		stop
+		start
+		restart
+		shutdown
+		status
+
+example:
+ubuntu:~$ supervisorctl -c ~/supervisord.conf
+storm_nimbus                     RUNNING    pid 2295, uptime 0:17:56
+storm_supervisor                 RUNNING    pid 2294, uptime 0:17:56
+storm_ui                         RUNNING    pid 2296, uptime 0:17:56
+
+supervisor> stop storm_nimbus
+storm_nimbus: stopped
+supervisor> quit
+
+-------------------------------------------------------------------------
+
+#lein install
+wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+Change ownership: chmod a+x lein
+Move lein to your system's executable path: sudo mv lein /usr/bin
+Install by typing: lein
+
+#maven install
+sudo apt-get purge maven maven2 maven3
+sudo apt-add-repository ppa:andrei-pozolotin/maven3
+sudo apt-get update
+sudo apt-get install maven3
+
+
+
+
+
+
+
+
+
+
