@@ -1,0 +1,207 @@
+Local Machine Commands
+
+sudo chmod 600 ~/.ssh/beertag.pem
+
+ssh -i ~/.ssh/beertag.pem ubuntu@ec2-52-39-52-1.us-west-2.compute.amazonaws.com
+
+
+   ------Modify config file ~/.ssh/config:
+
+
+Host namenode
+  HostName ec2-52-39-52-1.us-west-2.compute.amazonaws.com
+  User ubuntu
+  IdentityFile ~/.ssh/beertag.pem
+
+Host datanode1
+  HostName ec2-52-33-164-62.us-west-2.compute.amazonaws.com
+  User ubuntu
+  IdentityFile ~/.ssh/beertag.pem
+
+Host datanode2
+  HostName ec2-52-36-94-153.us-west-2.compute.amazonaws.com
+  User ubuntu
+  IdentityFile ~/.ssh/beertag.pem
+
+Host datanode3
+  HostName ec2-52-38-198-31.us-west-2.compute.amazonaws.com
+  User ubuntu
+  IdentityFile ~/.ssh/beertag.pem
+
+   -----------------------------------------
+scp ~/.ssh/beertag.pem ~/.ssh/config namenode:~/.ssh
+
+ssh namenode
+
+
+
+
+Master Node Commands
+
+ssh-keygen -f ~/.ssh/id_rsa -t rsa -P ""
+
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+cat ~/.ssh/id_rsa.pub | ssh datanode1 'cat >> ~/.ssh/authorized_keys'
+
+cat ~/.ssh/id_rsa.pub | ssh datanode2 'cat >> ~/.ssh/authorized_keys'
+
+cat ~/.ssh/id_rsa.pub | ssh datanode3 'cat >> ~/.ssh/authorized_keys'
+
+
+
+sudo apt-get update
+
+sudo apt-get install openjdk-7-jdk 
+
+wget http://apache.mirrors.tds.net/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz -P ~/Downloads
+
+sudo tar zxvf ~/Downloads/hadoop-* -C /usr/local
+
+sudo mv /usr/local/hadoop-* /usr/local/hadoop
+
+sudo vim ~/.profile
+
+------ ADD Hadoop and Java variables---------
+
+export JAVA_HOME=/usr
+export PATH=$PATH:$JAVA_HOME/bin
+
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+
+
+source ~/.profile
+
+
+--------Configure Hadoop Configurations-------
+sudo vim $HADOOP_CONF_DIR/hadoop-env.sh
+
+export JAVA_HOME=/usr 
+
+
+
+sudo vim $HADOOP_CONF_DIR/core-site.xml
+
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://ec2-52-39-52-1.us-west-2.compute.amazonaws.com:9000</value>
+  </property>
+</configuration>
+
+
+sudo vim $HADOOP_CONF_DIR/yarn-site.xml
+
+
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>ec2-52-39-52-1.us-west-2.compute.amazonaws.com</value>
+  </property>
+</configuration>
+
+
+sudo cp $HADOOP_CONF_DIR/mapred-site.xml.template $HADOOP_CONF_DIR/mapred-site.xml 
+
+
+sudo vim $HADOOP_CONF_DIR/mapred-site.xml
+<configuration>
+  <property>
+    <name>mapreduce.jobtracker.address</name>
+    <value>ec2-52-39-52-1.us-west-2.compute.amazonaws.com:54311</value>
+  </property>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration> 
+
+
+
+sudo vim /etc/hosts
+
+127.0.0.1 localhost
+ec2-52-39-52-1.us-west-2.compute.amazonaws.com namenode_hostname
+ec2-52-33-164-62.us-west-2.compute.amazonaws.com ip-172-31-38-9
+ec2-52-36-94-153.us-west-2.compute.amazonaws.com ip-172-31-40-151
+ec2-52-38-198-31.us-west-2.compute.amazonaws.com ip-172-31-40-152
+
+
+
+sudo vim $HADOOP_CONF_DIR/hdfs-site.xml
+<configuration>
+  <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+  </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///usr/local/hadoop/hadoop_data/hdfs/namenode</value>
+  </property>
+</configuration> 
+
+sudo mkdir -p $HADOOP_HOME/hadoop_data/hdfs/namenode
+
+sudo touch $HADOOP_CONF_DIR/masters
+
+sudo vim $HADOOP_CONF_DIR/masters
+ip-172-31-36-28
+
+sudo vim $HADOOP_CONF_DIR/slaves
+ip-172-31-38-9
+ip-172-31-40-151
+ip-172-31-40-152
+
+
+sudo chown -R ubuntu $HADOOP_HOME
+hdfs namenode -format
+$HADOOP_HOME/sbin/start-dfs.sh 
+
+------------------------------------SPARK CONFIGURATION---------------------
+sudo apt-get install scala
+
+wget http://apache.mirrors.tds.net/spark/spark-1.4.1/spark-1.4.1-bin-hadoop2.4.tgz -P ~/Downloads  
+sudo tar zxvf ~/Downloads/spark-* -C /usr/local  
+sudo mv /usr/local/spark-* /usr/local/spark
+
+sudo vim ~/.profile
+
+export SPARK_HOME=/usr/local/spark  
+export PATH=$PATH:$SPARK_HOME/bin  
+
+. ~/.profile
+
+sudo chown -R ubuntu $SPARK_HOME 
+
+cp $SPARK_HOME/conf/spark-env.sh.template $SPARK_HOME/conf/spark-env.sh  
+
+sudo vim $SPARK_HOME/conf/spark-env.sh
+
+export JAVA_HOME=/usr  
+export SPARK_PUBLIC_DNS="current_node_public_dns"  
+export SPARK_WORKER_CORES=6
+
+touch $SPARK_HOME/conf/slaves
+
+sudo vim $SPARK_HOME/conf/slaves
+
+
+ec2-52-33-164-62.us-west-2.compute.amazonaws.com
+ec2-52-36-94-153.us-west-2.compute.amazonaws.com
+ec2-52-38-198-31.us-west-2.compute.amazonaws.com
+
+$SPARK_HOME/sbin/start-all.sh  
