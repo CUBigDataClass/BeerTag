@@ -3,7 +3,7 @@ var width = 750;
 var height = 600;
 var radius = Math.min(width, height) / 2;
 
-var csv2 = 'tweets.csv';
+var csv2 = 'alcohol.csv';
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
@@ -49,8 +49,6 @@ var legendcolors = {
   'beer': '#7b615c',
   'liquor': '#de783b',
   'alcohol': '#6ab975',
-  'democratic': '#290EE9',
-  'republican': '#E91D0E',
 };
 
 // Total size of all segments; we set this later, after loading the data.
