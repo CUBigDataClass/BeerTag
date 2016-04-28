@@ -1,0 +1,25 @@
+1. Donwload apache cassandra 
+
+2.  unzip it and make two copies of conf folder conf and conf3 
+
+3. Go to each copies change cassandra.yml to cassandra2.yml and cassandra3.yml
+
+Make changes to the following the files
+
+1.   cassandra.yml under conf folder 
+      name the clustr
+      specify the seed node
+      Give listeninng adress and rpc folder
+      
+2.  cassandra-env.sh under conf folder
+    change JMX-folder
+    
+3. log4j properties under conf folder.
+  change log4j.appender.R.file address if needed.
+4. cassandra.in.sh under bin folder
+   make copies of cassandra.in.sh 
+5. cassandra under bin folder
+  make copies of cassandra and specify the config folder to use
+
+6. sudo if config lo0 alias 127.0.0.2
+      
