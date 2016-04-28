@@ -1,0 +1,27 @@
+------Spark Master Node-----
+Connect to machine using ssh and pem file
+
+tar -zxvf  kafka_2.10-0.8.2.0.tgz
+
+mv kafka_2.10-0.8.2.0 /usr/local/kafka
+
+=======install zookeeper========
+
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+bin/kafka-server-start.sh config/server.properties
+
+bin/kafka-topics.sh –create –zookeeper localhost:2181 –replication-factor 1 –partitions 1 –topic beertweet
+
+bin/kafka-topics.sh –list –zookeeper localhost:2181
+
+bin/kafka-console-producer.sh –broker-list localhost:9092 –topic beertweet
+
+
+bin/kafka-console-consumer.sh –zookeeper localhost:2181 –topic test –from-beginning
+
+cd /usr/local/spark
+
+bin/run–example org.apache.spark.examples.streaming.KafkaWordCount localhost:2181 test–group test 4
+
+ bin/spark-submit --jars external/kafka-assembly/target/scala-2.10/spark-streaming-kafka-assembly-1.6.1.jar examples/src/main/python/streaming/kafka_wordtweet.py localhost:2181 test 
