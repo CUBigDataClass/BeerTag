@@ -41,16 +41,14 @@ var colors = {
 	'trump': '#E91D0E',
 	'kasich': '#E91D0E',
 	'sport leagues': '#7f8c8d',
-	'news': '#7f8c8d'
+	'news': '#7f8c8d',
+	'election' : '#279122'
 };
 
 var legendcolors = {
-  'wine': '#F8F6C3',
-  'beer': '#7b615c',
-  'liquor': '#de783b',
-  'alcohol': '#6ab975',
   'democratic': '#290EE9',
   'republican': '#E91D0E',
+	'election' : '#279122',
 };
 
 // Total size of all segments; we set this later, after loading the data.

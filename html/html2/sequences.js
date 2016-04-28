@@ -15,7 +15,7 @@ var colors = {
   'wine': '#F8F6C3',
   'beer': '#7b615c',
   'liquor': '#de783b',
-  'alcohol': '#6ab975',
+  'alcohol': '#5cdcfd',
   'democratic': '#290EE9',
   'republican': '#E91D0E',
 	'absinthe': '#73B881',
@@ -34,21 +34,23 @@ var colors = {
 	'vodka': '#ecf0f1',
 	'whiskey': '#944718',
 	'white_wine':	'#F8F6C3',
-	'election' : '#7f8c8d',
+	'election' : '#279122',
 	'clinton': '#290EE9',
 	'cruz': '#E91D0E',
 	'sanders': '#290EE9',
 	'trump': '#E91D0E',
 	'kasich': '#E91D0E',
-	'sports leagues': '#7f8c8d',
-	'news': '#7f8c8d'
+	'sports leagues': '#e47d1a',
+	'news': '#132143',
+	'mlb': '#BB001B',
+	'nba': '#000063'
 };
 
 var legendcolors = {
-  'wine': '#F8F6C3',
-  'beer': '#7b615c',
   'liquor': '#de783b',
-  'alcohol': '#6ab975',
+	'news': '#132143',
+  'alcohol': '#5cdcfd',
+	'sports leagues': '#e47d1a',
   'democratic': '#290EE9',
   'republican': '#E91D0E',
 };

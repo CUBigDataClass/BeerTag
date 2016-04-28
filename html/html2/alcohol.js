@@ -15,7 +15,7 @@ var colors = {
   'wine': '#F8F6C3',
   'beer': '#7b615c',
   'liquor': '#de783b',
-  'alcohol': '#6ab975',
+  'alcohol': '#5cdcfd',
   'democratic': '#290EE9',
   'republican': '#E91D0E',
 	'absinthe': '#73B881',

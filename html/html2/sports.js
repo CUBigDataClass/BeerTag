@@ -38,19 +38,14 @@ var colors = {
 	'clinton': '#290EE9',
 	'cruz': '#E91D0E',
 	'sanders': '#290EE9',
+	'sport leagues': '#e47d1a',
 	'trump': '#E91D0E',
 	'kasich': '#E91D0E',
-	'sport leagues': '#7f8c8d',
 	'news': '#7f8c8d'
 };
 
 var legendcolors = {
-  'wine': '#F8F6C3',
-  'beer': '#7b615c',
-  'liquor': '#de783b',
-  'alcohol': '#6ab975',
-  'democratic': '#290EE9',
-  'republican': '#E91D0E',
+'sports leagues': '#e47d1a',
 };
 
 // Total size of all segments; we set this later, after loading the data.
